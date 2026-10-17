@@ -1,0 +1,10 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["APPLE_TEAM_ID.io.github.amirfransis.komona"],
+        "components": [{ "/": "/komona/i/*", "comment": "Komona invite links" }]
+      }
+    ]
+  }
+}

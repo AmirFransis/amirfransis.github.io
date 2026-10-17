@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Komona invite</title>
+    <meta name="robots" content="noindex" />
+    <style>
+      :root { color-scheme: light; }
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f2faf6;
+             font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #14213d; }
+      main { text-align: center; padding: 24px; }
+      .mark { width: 56px; height: 56px; border-radius: 16px; background: #1ec27f; margin: 0 auto 16px; }
+      a { color: #0e9f6a; font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="mark" aria-hidden="true"></div>
+      <h1 style="font-size: 20px">Opening your Komona invite…</h1>
+      <p id="fallback" hidden>If nothing happens, <a id="landing" href="#">open the invite page</a>.</p>
+    </main>
+    <script>
+      // Invite links: https://amirfransis.github.io/komona/i/?c=CODE
+      // With the app installed, Android App Links / iOS Universal Links open the app before this page loads.
+      // Otherwise (or inside in-app browsers that skip App Links) try the app scheme, then fall back to the
+      // full landing page served by the Komona server.
+      var LANDING_BASE = 'https://komona.expo.app';
+      var code = (new URLSearchParams(location.search).get('c') || '').replace(/[^A-Za-z0-9]/g, '');
+      var landing = code ? LANDING_BASE + '/i/' + code : LANDING_BASE;
+      document.getElementById('landing').href = landing;
+      document.getElementById('fallback').hidden = false;
+      if (code) {
+        var left = false;
+        document.addEventListener('visibilitychange', function () { if (document.hidden) left = true; });
+        location.href = 'komona://i/' + code;
+        setTimeout(function () { if (!left) location.replace(landing); }, 1200);
+      } else {
+        location.replace(landing);
+      }
+    </script>
+  </body>
+</html>
