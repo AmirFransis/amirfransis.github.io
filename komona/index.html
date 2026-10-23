@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Komona · Organize games with friends</title>
+<meta name="description" content="Komona keeps your weekly games organized: live spots, a fair waitlist and who brings what, without the group-chat chaos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Rubik:wght@600;700;800&display=swap">
+<style>
+:root{--green:#16C47F;--green-ink:#0B8A57;--navy:#14213D;--gray:#5F6570;--line:#E3E6E0;--bg:#F7F8F5;--card:#fff;--amber:#FFF4DC;--amber-ink:#6B4600}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--navy);font:16px/1.65 'Heebo',system-ui,sans-serif}
+a{color:var(--green-ink);font-weight:600}
+.nav{position:sticky;top:0;z-index:5;background:rgba(247,248,245,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav .in{max-width:860px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font:800 22px 'Rubik',sans-serif;letter-spacing:-.5px;color:var(--navy);text-decoration:none;display:flex;align-items:center;gap:8px}
+.brand i{width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #D6F5E7}
+.nav nav{display:flex;gap:18px;font-size:14px}
+.nav nav a{color:var(--gray);text-decoration:none}
+.nav nav a[aria-current]{color:var(--navy)}
+.wrap{max-width:860px;margin:0 auto;padding:40px 20px 80px}
+h1{font:700 44px/1.1 'Rubik',sans-serif;letter-spacing:-1.2px;margin:0 0 10px}
+h2{font:700 24px/1.25 'Rubik',sans-serif;letter-spacing:-.4px;margin:48px 0 12px;scroll-margin-top:80px}
+h3{font:600 18px/1.3 'Rubik',sans-serif;margin:24px 0 8px}
+.meta{color:var(--gray);font-size:14px;margin:0 0 28px}
+.toc{background:var(--card);border-radius:20px;padding:20px 24px;box-shadow:0 1px 2px rgba(20,33,61,.04),0 10px 28px -14px rgba(20,33,61,.18)}
+.toc b{display:block;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--gray);margin-bottom:8px}
+.toc ol{margin:0;padding-left:20px;columns:2;column-gap:32px}
+.toc li{margin:3px 0;break-inside:avoid}
+.toc a{color:var(--navy);font-weight:500;text-decoration:none}
+.callout{border-radius:18px;padding:16px 20px;margin:18px 0;background:#E6F9F0;border:1.5px solid #A8E8CB}
+.callout.warn{background:var(--amber);border-color:#FFD98A;color:var(--amber-ink)}
+.callout.reviewer{background:#FFE8E8;border-color:#FFC2C4;color:#7A1F23}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:rgba(20,33,61,.08);margin-bottom:6px}
+.ph{background:#FFF0B8;border-radius:4px;padding:0 4px;font-weight:600}
+.table-scroll{overflow-x:auto;border-radius:16px;background:var(--card);box-shadow:0 1px 2px rgba(20,33,61,.04);margin:14px 0}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14.5px}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#F0F1EE;font-weight:600}
+tr:last-child td{border-bottom:0}
+ul li,ol li{margin:4px 0}
+footer{border-top:1px solid var(--line);background:#fff}
+footer .in{max-width:860px;margin:0 auto;padding:28px 20px;display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between;font-size:14px;color:var(--gray)}
+footer a{color:var(--gray);font-weight:500}
+@media (max-width:640px){h1{font-size:34px}.toc ol{columns:1}.nav nav{gap:12px}}
+
+.hero{padding:56px 0 24px}
+.hero h1{font-size:52px;margin:0 0 14px}
+.hero p{font-size:19px;color:var(--gray);max-width:620px;margin:0}
+.badge{display:inline-block;font-size:13px;font-weight:600;color:var(--green-ink);background:#E6F9F0;border:1.5px solid #A8E8CB;border-radius:99px;padding:4px 12px;margin-bottom:18px}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:36px 0}
+.card{background:var(--card);border-radius:20px;padding:20px;box-shadow:0 1px 2px rgba(20,33,61,.04),0 10px 28px -14px rgba(20,33,61,.18)}
+.card .em{font-size:26px}
+.card h3{margin:10px 0 6px}
+.card p{margin:0;color:var(--gray);font-size:15px}
+.soon{margin-top:28px;padding:16px 20px;border-radius:18px;background:var(--amber);border:1.5px solid #FFD98A;color:var(--amber-ink)}
+@media (max-width:640px){.hero h1{font-size:38px}.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="nav"><div class="in">
+<a class="brand" href="./"><i></i>komona</a>
+<nav><a href="terms/">Terms</a><a href="privacy/">Privacy</a><a href="delete-account/">Delete account</a></nav>
+</div></header>
+
+<main class="wrap">
+<section class="hero">
+<span class="badge">For pickup games, dinners &amp; game nights</span>
+<h1>Less chat. More hangs.</h1>
+<p>Komona keeps your weekly games organized: live spots, a fair first-come-first-served waitlist and who brings what, all in one place instead of a 200-message group chat.</p>
+</section>
+
+<div class="cards">
+<div class="card"><div class="em">📋</div><h3>Live roster</h3><p>See who's in right now. Spots update the moment someone joins or leaves.</p></div>
+<div class="card"><div class="em">⏳</div><h3>Fair waitlist</h3><p>When a game is full you join the waitlist in order, and move in automatically when a spot opens.</p></div>
+<div class="card"><div class="em">⚽</div><h3>Who brings what</h3><p>Organizers ask "Who can bring a ball?" and members claim it with one tap.</p></div>
+<div class="card"><div class="em">🔁</div><h3>Every week, sorted</h3><p>Repeating events open signups on schedule and remind everyone before the game.</p></div>
+</div>
+
+<h2>Private by design</h2>
+<p>Events are visible only to people you invite by link or code. Komona has no ads and doesn't sell your data. Read the <a href="privacy/">Privacy Policy</a>.</p>
+
+<div class="soon"><b>Coming soon</b> to Google Play and the App Store. Got an invite link? Open it on your phone to join the game.</div>
+</main>
+
+<footer><div class="in">
+<span>© 2026 Komona</span>
+<span><a href="terms/">Terms of Service</a> · <a href="privacy/">Privacy Policy</a> · <a href="delete-account/">Delete account</a> · <a href="mailto:fransis.developer@gmail.com">Contact</a></span>
+</div></footer>
+</body>
+</html>
