@@ -2,7 +2,7 @@
   "applinks": {
     "details": [
       {
-        "appIDs": ["APPLE_TEAM_ID.io.github.amirfransis.komona"],
+        "appIDs": ["D2S8B9T6AW.io.github.amirfransis.komona", "D2S8B9T6AW.io.github.amirfransis.komona.qa"],
         "components": [{ "/": "/komona/i/*", "comment": "Komona invite links" }]
       }
     ]
