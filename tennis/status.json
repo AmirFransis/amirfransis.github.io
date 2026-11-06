@@ -1,0 +1,41 @@
+{
+  "updated": "2026-11-06T13:15:24+02:00",
+  "schedule": {
+    "weekday": "Fri",
+    "time": "15:00",
+    "duration": "שעתיים",
+    "courts": [
+      "מגרש 1",
+      "מגרש 2"
+    ],
+    "opens": "3 days before, 00:00 (Israel)",
+    "next_open": "2026-11-10T00:00:00+02:00",
+    "dry_run": true
+  },
+  "runs": [
+    {
+      "ts": "2026-11-06T13:15:24+02:00",
+      "ok": true,
+      "dry_run": true,
+      "target": "Mon 09/11 15:00 · שעתיים",
+      "court": "מגרש 2",
+      "message": "Stopped before Confirm Booking (test)"
+    },
+    {
+      "ts": "2026-11-06T13:15:09+02:00",
+      "ok": true,
+      "dry_run": true,
+      "target": "Mon 09/11 15:00 · שעתיים",
+      "court": "מגרש 2",
+      "message": "Stopped before Confirm Booking (test)"
+    },
+    {
+      "ts": "2026-11-06T13:13:03+02:00",
+      "ok": false,
+      "dry_run": true,
+      "target": "Mon 09/11 15:00 · שעתיים",
+      "court": null,
+      "message": "FairPlay home screen did not load"
+    }
+  ]
+}

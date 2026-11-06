@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Tennis Bot</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎾</text></svg>">
+<style>
+  :root {
+    --bg: #f6f7f5; --card: #ffffff; --text: #1d2a22; --muted: #637067; --line: #e2e6e1;
+    --brand: #386b4f; --ok: #2e8b4e; --ok-bg: #e5f4ea; --bad: #c0392b; --bad-bg: #fbe9e7;
+    --dry: #6b5bb5; --dry-bg: #eeebfa; --wait: #9a6b00; --wait-bg: #fff4d6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111613; --card: #1a211c; --text: #e6ece7; --muted: #95a39a; --line: #2b352e;
+      --brand: #7fc79c; --ok: #6fd08f; --ok-bg: #173523; --bad: #ff8a7a; --bad-bg: #3a1d19;
+      --dry: #b3a6ff; --dry-bg: #262143; --wait: #f2c55c; --wait-bg: #3a2f12;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111613; --card: #1a211c; --text: #e6ece7; --muted: #95a39a; --line: #2b352e;
+    --brand: #7fc79c; --ok: #6fd08f; --ok-bg: #173523; --bad: #ff8a7a; --bad-bg: #3a1d19;
+    --dry: #b3a6ff; --dry-bg: #262143; --wait: #f2c55c; --wait-bg: #3a2f12;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 24px 16px 48px; }
+  header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  h1 { font-size: 22px; margin: 0; }
+  .muted { color: var(--muted); font-size: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-top: 16px; }
+  .status { display: flex; gap: 14px; align-items: center; }
+  .badge { font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+  .ok { color: var(--ok); background: var(--ok-bg); }
+  .bad { color: var(--bad); background: var(--bad-bg); }
+  .dry { color: var(--dry); background: var(--dry-bg); }
+  .wait { color: var(--wait); background: var(--wait-bg); }
+  .big { font-size: 20px; font-weight: 650; }
+  .grid { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0; }
+  .grid dt { color: var(--muted); }
+  .grid dd { margin: 0; }
+  h2 { font-size: 15px; margin: 0 0 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  ul.runs { list-style: none; margin: 0; padding: 0; }
+  ul.runs li { padding: 10px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; }
+  ul.runs li:first-child { border-top: 0; padding-top: 0; }
+  .msg { grid-column: 1 / -1; color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
+  [dir=auto] { unicode-bidi: plaintext; }
+  #err { color: var(--bad); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>🎾 Tennis Bot</h1>
+    <span class="muted" id="updated"></span>
+  </header>
+
+  <section class="card" id="latest"><span class="muted">Loading…</span></section>
+
+  <section class="card">
+    <h2>Schedule</h2>
+    <dl class="grid" id="schedule"></dl>
+  </section>
+
+  <section class="card">
+    <h2>Recent runs</h2>
+    <ul class="runs" id="runs"></ul>
+  </section>
+  <p class="muted" id="err"></p>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmt = iso => iso ? new Date(iso).toLocaleString("en-GB", { weekday: "short", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jerusalem" }) : "—";
+function kind(r) {
+  if (!r.ok) return ["bad", "Failed"];
+  return r.dry_run ? ["dry", "Dry run OK"] : ["ok", "Booked"];
+}
+async function load() {
+  try {
+    const res = await fetch("status.json?t=" + Date.now(), { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const s = await res.json();
+    $("updated").textContent = "Updated " + fmt(s.updated);
+    const runs = s.runs || [];
+    const r = runs[0];
+    if (r) {
+      const [cls, label] = kind(r);
+      $("latest").innerHTML = `
+        <div class="status"><span class="badge ${cls}">${label}</span>
+          <span class="big" dir="auto">${esc(r.target)}</span></div>
+        <dl class="grid" style="margin-top:12px">
+          ${r.court ? `<dt>Court</dt><dd dir="auto">${esc(r.court)}</dd>` : ""}
+          <dt>Ran</dt><dd>${fmt(r.ts)}</dd>
+          ${r.message ? `<dt>Details</dt><dd dir="auto">${esc(r.message)}</dd>` : ""}
+        </dl>`;
+    } else {
+      $("latest").innerHTML = `<div class="status"><span class="badge wait">Waiting</span><span>No runs yet</span></div>`;
+    }
+    const sc = s.schedule || {};
+    $("schedule").innerHTML = `
+      <dt>Books</dt><dd dir="auto">${esc(sc.weekday)} ${esc(sc.time)} · ${esc(sc.duration)}</dd>
+      <dt>Courts</dt><dd dir="auto">${esc((sc.courts || []).join(" → "))}</dd>
+      <dt>Opens</dt><dd>${esc(sc.opens)}</dd>
+      <dt>Next run</dt><dd>${fmt(sc.next_open)}</dd>
+      <dt>Mode</dt><dd>${sc.dry_run ? '<span class="badge dry">Dry run</span>' : '<span class="badge ok">Live</span>'}</dd>`;
+    $("runs").innerHTML = runs.map(r => {
+      const [cls, label] = kind(r);
+      return `<li><span dir="auto">${esc(r.target)}${r.court ? " · " + esc(r.court) : ""}</span>
+        <span class="badge ${cls}">${label}</span>
+        <span class="msg">${fmt(r.ts)}${r.message ? " — " + esc(r.message) : ""}</span></li>`;
+    }).join("") || '<li class="muted">No runs yet</li>';
+    $("err").textContent = "";
+  } catch (e) {
+    $("err").textContent = "Could not load status: " + e.message;
+  }
+}
+load();
+setInterval(load, 60000);
+</script>
+</body>
+</html>
