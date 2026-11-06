@@ -41,7 +41,7 @@
   .big { font-size: 20px; font-weight: 650; }
   .grid { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0; }
   .grid dt { color: var(--muted); }
-  .grid dd { margin: 0; }
+  .grid dd { margin: 0; text-align: left; }
   h2 { font-size: 15px; margin: 0 0 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
   ul.runs { list-style: none; margin: 0; padding: 0; }
   ul.runs li { padding: 10px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; }
@@ -80,11 +80,15 @@
     <span class="muted"><span id="updated"></span> · <button class="link" id="logout">Lock</button></span>
   </header>
 
-  <section class="card" id="latest"><span class="muted">Loading…</span></section>
+  <section class="card">
+    <h2>Next booking</h2>
+    <div id="nextbig"></div>
+    <dl class="grid" id="schedule" style="margin-top:12px"></dl>
+  </section>
 
   <section class="card">
-    <h2>Schedule</h2>
-    <dl class="grid" id="schedule"></dl>
+    <h2>Latest run</h2>
+    <div id="latest"><span class="muted">Loading…</span></div>
   </section>
 
   <section class="card">
@@ -206,12 +210,15 @@ function render(s) {
       $("latest").innerHTML = `<div class="status"><span class="badge wait">Waiting</span><span>No runs yet</span></div>`;
     }
     const sc = s.schedule || {};
+    const target = sc.next_target ? new Date(sc.next_target + "T12:00:00").toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short" }) : esc(sc.weekday);
+    const mode = sc.dry_run ? '<span class="badge dry">Dry run</span>' : '<span class="badge ok">Live</span>';
+    $("nextbig").innerHTML = `<div class="status">${mode}
+      <span class="big">${target} · ${esc(sc.time)} <span dir="rtl">${esc(sc.duration)}</span></span></div>`;
     $("schedule").innerHTML = `
-      <dt>Books</dt><dd dir="auto">${esc(sc.weekday)} ${esc(sc.time)} · ${esc(sc.duration)}</dd>
-      <dt>Courts</dt><dd dir="auto">${esc((sc.courts || []).join(" → "))}</dd>
-      <dt>Opens</dt><dd>${esc(sc.opens)}</dd>
-      <dt>Next run</dt><dd>${fmt(sc.next_open)}</dd>
-      <dt>Mode</dt><dd>${sc.dry_run ? '<span class="badge dry">Dry run</span>' : '<span class="badge ok">Live</span>'}</dd>`;
+      <dt>Courts</dt><dd><span dir="rtl">${(sc.courts || []).map(esc).join('</span> → <span dir="rtl">')}</span></dd>
+      <dt>Books at</dt><dd>${fmt(sc.next_open)}</dd>
+      <dt>Rule</dt><dd>${esc(sc.opens)}</dd>
+      ${sc.runner ? `<dt>Runs on</dt><dd>${esc(sc.runner)}</dd>` : ""}`;
     $("runs").innerHTML = runs.map((r, i) => {
       const [cls, label] = kind(r);
       return `<li><span dir="auto">${esc(r.target)}${r.court ? " · " + esc(r.court) : ""}</span>
