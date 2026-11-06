@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-06T13:16:30+02:00",
+  "updated": "2026-11-06T13:20:49+02:00",
   "schedule": {
     "weekday": "Fri",
     "time": "15:00",
@@ -8,9 +8,9 @@
       "מגרש 1",
       "מגרש 2"
     ],
-    "opens": "3 days before, 00:00 (Israel)",
-    "next_open": "2026-11-10T00:00:00+02:00",
-    "dry_run": true
+    "opens": "Tuesday 00:10 (Israel)",
+    "next_open": "2026-11-10T00:10:00+02:00",
+    "dry_run": false
   },
   "runs": [
     {
