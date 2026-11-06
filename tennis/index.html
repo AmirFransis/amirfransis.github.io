@@ -163,7 +163,7 @@ function detailRows(r) {
     row("Booking ID", d.booking_id),
     row("Allowance used", d.allowance_used),
     row("Date opened", d.date_opened_at ? d.date_opened_at + (d.refreshes ? ` (after ${d.refreshes} refreshes)` : "") : ""),
-    row("Booked in", d.seconds_after_open !== undefined ? d.seconds_after_open + " s after it opened" : ""),
+    row(r.dry_run ? "Reached confirm in" : "Booked in", d.seconds_after_open !== undefined ? d.seconds_after_open + " s after it opened" : ""),
     row("Attempts", r.attempts > 1 ? r.attempts : ""),
     row("Reason", d.reason, true),
     row("Ran", fmt(r.ts)),
