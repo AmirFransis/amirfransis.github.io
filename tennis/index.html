@@ -49,13 +49,31 @@
   .msg { grid-column: 1 / -1; color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
   [dir=auto] { unicode-bidi: plaintext; }
   #err { color: var(--bad); }
+  #lock { max-width: 360px; margin: 18vh auto 0; text-align: center; }
+  #lock form { display: flex; gap: 8px; margin-top: 16px; }
+  #lock input { flex: 1; min-width: 0; font: inherit; padding: 10px 12px; border-radius: 10px;
+                border: 1px solid var(--line); background: var(--card); color: var(--text); }
+  #lock button, .link { font: inherit; padding: 10px 16px; border-radius: 10px; border: 0;
+                background: var(--brand); color: var(--bg); font-weight: 600; cursor: pointer; }
+  .link { background: none; color: var(--muted); padding: 0; font-weight: 400; font-size: 14px; text-decoration: underline; }
+  #lockerr { color: var(--bad); min-height: 1.5em; margin-top: 10px; font-size: 14px; }
+  [hidden] { display: none !important; }
 </style>
 </head>
 <body>
-<main>
+<section class="card" id="lock" hidden>
+  <h1>🎾 Tennis Bot</h1>
+  <p class="muted">Enter the password to view the status.</p>
+  <form id="lockform">
+    <input id="pw" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Password" autofocus>
+    <button type="submit">Open</button>
+  </form>
+  <div id="lockerr"></div>
+</section>
+<main id="app" hidden>
   <header>
     <h1>🎾 Tennis Bot</h1>
-    <span class="muted" id="updated"></span>
+    <span class="muted"><span id="updated"></span> · <button class="link" id="logout">Lock</button></span>
   </header>
 
   <section class="card" id="latest"><span class="muted">Loading…</span></section>
@@ -79,11 +97,54 @@ function kind(r) {
   if (!r.ok) return ["bad", "Failed"];
   return r.dry_run ? ["dry", "Dry run OK"] : ["ok", "Booked"];
 }
-async function load() {
+// ---- password + decryption (AES-256-GCM, PBKDF2-SHA256; matches register.py encrypt_json) ----
+const KEY = "tennis-bot-pw";
+const store = { get() { try { return localStorage.getItem(KEY); } catch { return null; } },
+                set(v) { try { localStorage.setItem(KEY, v); } catch {} },
+                del() { try { localStorage.removeItem(KEY); } catch {} } };
+const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function fetchEnc() {
+  const res = await fetch("status.enc.json?t=" + Date.now(), { cache: "no-store" });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return res.json();
+}
+async function decrypt(env, pw) {
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey({ name: "PBKDF2", hash: "SHA-256", salt: b64(env.salt), iterations: env.iter },
+                                            base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64(env.iv) }, key, b64(env.ct));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+let password = null;
+function showLock(msg) {
+  $("app").hidden = true; $("lock").hidden = false; $("lockerr").textContent = msg || ""; $("pw").focus();
+}
+$("lockform").addEventListener("submit", async e => {
+  e.preventDefault();
+  const pw = $("pw").value;
+  $("lockerr").textContent = "Checking…";
   try {
-    const res = await fetch("status.json?t=" + Date.now(), { cache: "no-store" });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const s = await res.json();
+    const s = await decrypt(await fetchEnc(), pw);
+    password = pw; store.set(pw); $("pw").value = "";
+    $("lock").hidden = true; $("app").hidden = false;
+    render(s);
+  } catch (err) {
+    $("lockerr").textContent = err.name === "OperationError" ? "Wrong password" : "Could not load: " + err.message;
+  }
+});
+$("logout").addEventListener("click", () => { password = null; store.del(); showLock(); });
+
+async function load() {
+  if (!password) return;
+  try {
+    render(await decrypt(await fetchEnc(), password));
+  } catch (e) {
+    if (e.name === "OperationError") { password = null; store.del(); showLock("Password changed - enter it again"); }
+    else $("err").textContent = "Could not load status: " + e.message;
+  }
+}
+function render(s) {
+  try {
     $("updated").textContent = "Updated " + fmt(s.updated);
     const runs = s.runs || [];
     const r = runs[0];
@@ -115,10 +176,17 @@ async function load() {
     }).join("") || '<li class="muted">No runs yet</li>';
     $("err").textContent = "";
   } catch (e) {
-    $("err").textContent = "Could not load status: " + e.message;
+    $("err").textContent = "Could not show status: " + e.message;
   }
 }
-load();
+(async () => {
+  const saved = store.get();
+  if (!saved) return showLock();
+  try {
+    const s = await decrypt(await fetchEnc(), saved);
+    password = saved; $("app").hidden = false; render(s);
+  } catch { store.del(); showLock(); }
+})();
 setInterval(load, 60000);
 </script>
 </body>
