@@ -58,6 +58,10 @@
   .link { background: none; color: var(--muted); padding: 0; font-weight: 400; font-size: 14px; text-decoration: underline; }
   #lockerr { color: var(--bad); min-height: 1.5em; margin-top: 10px; font-size: 14px; }
   [hidden] { display: none !important; }
+  .shot { margin-top: 14px; text-align: center; }
+  .shot img { max-width: 100%; max-height: 70vh; border-radius: 12px; border: 1px solid var(--line); display: inline-block; }
+  .more { grid-column: 1 / -1; margin-top: 8px; padding: 12px; border-radius: 10px; background: var(--bg); }
+  .more .grid { font-size: 14px; }
 </style>
 </head>
 <body>
@@ -143,6 +147,49 @@ async function load() {
     else $("err").textContent = "Could not load status: " + e.message;
   }
 }
+// ---- run details + encrypted screenshots ----
+function detailRows(r) {
+  const d = r.details || {};
+  const row = (k, v, auto) => v === undefined || v === null || v === "" ? "" :
+    `<dt>${k}</dt><dd${auto ? ' dir="auto"' : ""}>${esc(v)}</dd>`;
+  return [
+    row("Court", r.court, true),
+    row("Date", d.date),
+    row("Time", d.time_range),
+    row("Booking ID", d.booking_id),
+    row("Allowance used", d.allowance_used),
+    row("Date opened", d.date_opened_at ? d.date_opened_at + (d.refreshes ? ` (after ${d.refreshes} refreshes)` : "") : ""),
+    row("Booked in", d.seconds_after_open !== undefined ? d.seconds_after_open + " s after it opened" : ""),
+    row("Attempts", r.attempts > 1 ? r.attempts : ""),
+    row("Reason", d.reason, true),
+    row("Ran", fmt(r.ts)),
+    !d.reason && r.message ? row("Result", r.message, true) : "",
+  ].join("");
+}
+const shotCache = new Map();
+async function shotURL(path) {
+  if (!shotCache.has(path)) {
+    shotCache.set(path, (async () => {
+      const res = await fetch(path, { cache: "force-cache" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const img = await decrypt(await res.json(), password);
+      return `data:${img.mime};base64,${img.b64}`;
+    })());
+  }
+  return shotCache.get(path);
+}
+function loadShots(root) {
+  root.querySelectorAll("[data-shot]").forEach(async el => {
+    try {
+      const url = await shotURL(el.dataset.shot);
+      el.innerHTML = `<a href="${url}" target="_blank" rel="noopener"><img alt="Screenshot of the app at the end of the run" src="${url}"></a>`;
+    } catch (e) {
+      shotCache.delete(el.dataset.shot);
+      el.innerHTML = `<span class="muted">Screenshot unavailable (${esc(e.message)})</span>`;
+    }
+  });
+}
+
 function render(s) {
   try {
     $("updated").textContent = "Updated " + fmt(s.updated);
@@ -153,11 +200,8 @@ function render(s) {
       $("latest").innerHTML = `
         <div class="status"><span class="badge ${cls}">${label}</span>
           <span class="big" dir="auto">${esc(r.target)}</span></div>
-        <dl class="grid" style="margin-top:12px">
-          ${r.court ? `<dt>Court</dt><dd dir="auto">${esc(r.court)}</dd>` : ""}
-          <dt>Ran</dt><dd>${fmt(r.ts)}</dd>
-          ${r.message ? `<dt>Details</dt><dd dir="auto">${esc(r.message)}</dd>` : ""}
-        </dl>`;
+        <dl class="grid" style="margin-top:12px">${detailRows(r)}</dl>
+        ${r.shot ? `<div class="shot" data-shot="${esc(r.shot)}"><span class="muted">Loading screenshot…</span></div>` : ""}`;
     } else {
       $("latest").innerHTML = `<div class="status"><span class="badge wait">Waiting</span><span>No runs yet</span></div>`;
     }
@@ -168,12 +212,23 @@ function render(s) {
       <dt>Opens</dt><dd>${esc(sc.opens)}</dd>
       <dt>Next run</dt><dd>${fmt(sc.next_open)}</dd>
       <dt>Mode</dt><dd>${sc.dry_run ? '<span class="badge dry">Dry run</span>' : '<span class="badge ok">Live</span>'}</dd>`;
-    $("runs").innerHTML = runs.map(r => {
+    $("runs").innerHTML = runs.map((r, i) => {
       const [cls, label] = kind(r);
       return `<li><span dir="auto">${esc(r.target)}${r.court ? " · " + esc(r.court) : ""}</span>
         <span class="badge ${cls}">${label}</span>
-        <span class="msg">${fmt(r.ts)}${r.message ? " — " + esc(r.message) : ""}</span></li>`;
+        <span class="msg">${fmt(r.ts)}${r.message ? " — " + esc(r.message) : ""}
+          ${i > 0 && (r.shot || r.details) ? ` · <button class="link" data-more="${i}">Details</button>` : ""}</span>
+        <div class="more" id="more-${i}" hidden></div></li>`;
     }).join("") || '<li class="muted">No runs yet</li>';
+    document.querySelectorAll("[data-more]").forEach(btn => btn.addEventListener("click", () => {
+      const i = +btn.dataset.more, r = runs[i], box = $("more-" + i);
+      if (!box.hidden) { box.hidden = true; btn.textContent = "Details"; return; }
+      box.innerHTML = `<dl class="grid">${detailRows(r)}</dl>` +
+        (r.shot ? `<div class="shot" data-shot="${esc(r.shot)}"><span class="muted">Loading screenshot…</span></div>` : "");
+      box.hidden = false; btn.textContent = "Hide";
+      loadShots(box);
+    }));
+    loadShots($("latest"));
     $("err").textContent = "";
   } catch (e) {
     $("err").textContent = "Could not show status: " + e.message;
