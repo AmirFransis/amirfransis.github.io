@@ -102,6 +102,7 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const fmt = iso => iso ? new Date(iso).toLocaleString("en-GB", { weekday: "short", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jerusalem" }) : "—";
 function kind(r) {
+  if (r.cancelled) return ["wait", "Cancelled"];
   if (!r.ok) return ["bad", "Failed"];
   return r.dry_run ? ["dry", "Dry run OK"] : ["ok", "Booked"];
 }
@@ -167,6 +168,7 @@ function detailRows(r) {
     row("Attempts", r.attempts > 1 ? r.attempts : ""),
     row("Reason", d.reason, true),
     row("Ran", fmt(r.ts)),
+    row("Cancelled", r.cancelled ? fmt(r.cancelled_at) : ""),
     !d.reason && r.message ? row("Result", r.message, true) : "",
   ].join("");
 }
