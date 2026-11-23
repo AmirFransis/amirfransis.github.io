@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Get Komona</title>
+<link rel="icon" href="../assets/favicon.png">
+<style>
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#F7F8F5;color:#14213D;font:17px/1.5 'Heebo',system-ui,sans-serif;text-align:center;padding:20px;box-sizing:border-box}
+.logo{width:96px;height:96px;margin:0 auto}
+h1{margin:12px 0 4px;font-size:28px}
+p{margin:0 0 20px;color:#5F6570}
+.stores{display:flex;flex-direction:column;align-items:center;gap:12px}
+.stores a{display:inline-block;border-radius:10px}
+.stores a:focus-visible{outline:3px solid #087449;outline-offset:3px}
+.as{height:52px;width:auto}
+.gp{height:76px;width:auto;margin:-12px 0}
+.soon{opacity:.45}
+.soon-label{font-size:14px;color:#5F6570;margin-top:-6px}
+</style>
+<!-- Store URLs live in ../assets/config.js (shared with the home page). -->
+<script src="../assets/config.js"></script>
+<script>
+// The QR code on the home page opens this page: send each phone to its store.
+(function(){
+  var S = window.KOMONA_STORES || {};
+  var ua = navigator.userAgent || '';
+  var isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var isAndroid = /Android/i.test(ua);
+  if (isIOS) { if (S.APP_STORE_URL) location.replace(S.APP_STORE_URL); } // no URL yet: stay on the chooser below
+  else if (isAndroid) { if (S.PLAY_URL) location.replace(S.PLAY_URL); }
+  else location.replace('../#download');
+})();
+</script>
+</head>
+<body>
+<main>
+  <img class="logo" src="../assets/logo.png" alt="">
+  <h1>Komona</h1>
+  <p>Choose your store · <span lang="he" dir="rtl">בחרו חנות</span></p>
+  <div class="stores">
+    <a id="as" href="../#download"><img class="as" src="../assets/badges/app-store-en.svg" alt="Download on the App Store"></a>
+    <a id="gp" href="https://play.google.com/store/apps/details?id=io.github.amirfransis.komona"><img class="gp" src="../assets/badges/google-play-en.png" alt="Get it on Google Play"></a>
+  </div>
+</main>
+<script>
+(function(){
+  var S = window.KOMONA_STORES || {};
+  if (S.PLAY_URL) document.getElementById('gp').href = S.PLAY_URL;
+  var as = document.getElementById('as');
+  if (S.APP_STORE_URL) { as.href = S.APP_STORE_URL; return; }
+  var badge = as.querySelector('img');
+  badge.classList.add('soon');
+  var wrap = document.createElement('div');
+  wrap.appendChild(badge);
+  var label = document.createElement('div');
+  label.className = 'soon-label';
+  label.textContent = 'Coming soon · בקרוב';
+  wrap.appendChild(label);
+  as.replaceWith(wrap);
+})();
+</script>
+</body>
+</html>

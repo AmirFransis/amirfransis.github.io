@@ -1,93 +1,335 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Komona · Organize games with friends</title>
-<meta name="description" content="Komona keeps your weekly games organized: live spots, a fair waitlist and who brings what, without the group-chat chaos.">
+<title>Komona · Less chat. More hangs.</title>
+<meta name="description" content="Komona organizes events with your friends: live spots, a fair waitlist and who brings what, without the group-chat chaos.">
+<meta name="theme-color" content="#16C47F">
+<link rel="icon" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="canonical" href="https://amirfransis.github.io/komona/">
+<link rel="alternate" hreflang="en" href="https://amirfransis.github.io/komona/?lang=en">
+<link rel="alternate" hreflang="he" href="https://amirfransis.github.io/komona/?lang=he">
+<link rel="alternate" hreflang="x-default" href="https://amirfransis.github.io/komona/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Komona">
+<meta property="og:url" content="https://amirfransis.github.io/komona/">
+<meta property="og:title" content="Komona · Less chat. More hangs.">
+<meta property="og:description" content="Games, dinners & hangouts with friends, sorted: live spots, a fair waitlist and who brings what.">
+<meta property="og:image" content="https://amirfransis.github.io/komona/assets/og-image.png">
+<meta property="og:image:width" content="1024">
+<meta property="og:image:height" content="500">
+<meta property="og:image:alt" content="Komona: Less chat. More hangs.">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="he_IL">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Komona · Less chat. More hangs.">
+<meta name="twitter:description" content="Games, dinners & hangouts with friends, sorted: live spots, a fair waitlist and who brings what.">
+<meta name="twitter:image" content="https://amirfransis.github.io/komona/assets/og-image.png">
+<meta name="twitter:image:alt" content="Komona: Less chat. More hangs.">
+<!-- Store URLs (Google Play + App Store) live in assets/config.js, shared with get/index.html. -->
+<script src="assets/config.js"></script>
+<script>
+// Pick the language before first paint so Hebrew visitors don't see a left-to-right flash.
+(function(){
+  var q = null; try { q = new URLSearchParams(location.search).get('lang'); } catch(e) {}
+  var saved = null; try { saved = localStorage.getItem('komona-lang'); } catch(e) {}
+  var nav = (navigator.language || 'en').toLowerCase();
+  var lang = q === 'he' || q === 'en' ? q : (saved === 'he' || saved === 'en' ? saved : (nav.indexOf('he') === 0 || nav.indexOf('iw') === 0 ? 'he' : 'en'));
+  window.KOMONA_LANG = lang;
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Rubik:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Rubik:wght@600;700;800&display=swap">
 <style>
-:root{--green:#16C47F;--green-ink:#0B8A57;--navy:#14213D;--gray:#5F6570;--line:#E3E6E0;--bg:#F7F8F5;--card:#fff;--amber:#FFF4DC;--amber-ink:#6B4600}
+:root{--green:#16C47F;--green-ink:#087449;--navy:#14213D;--gray:#5F6570;--line:#E3E6E0;--bg:#F7F8F5;--card:#fff;--amber:#FFB020}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--navy);font:16px/1.65 'Heebo',system-ui,sans-serif}
-a{color:var(--green-ink);font-weight:600}
-.nav{position:sticky;top:0;z-index:5;background:rgba(247,248,245,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.nav .in{max-width:860px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.brand{font:800 22px 'Rubik',sans-serif;letter-spacing:-.5px;color:var(--navy);text-decoration:none;display:flex;align-items:center;gap:8px}
-.brand i{width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #D6F5E7}
-.nav nav{display:flex;gap:18px;font-size:14px}
-.nav nav a{color:var(--gray);text-decoration:none}
-.nav nav a[aria-current]{color:var(--navy)}
-.wrap{max-width:860px;margin:0 auto;padding:40px 20px 80px}
-h1{font:700 44px/1.1 'Rubik',sans-serif;letter-spacing:-1.2px;margin:0 0 10px}
-h2{font:700 24px/1.25 'Rubik',sans-serif;letter-spacing:-.4px;margin:48px 0 12px;scroll-margin-top:80px}
-h3{font:600 18px/1.3 'Rubik',sans-serif;margin:24px 0 8px}
-.meta{color:var(--gray);font-size:14px;margin:0 0 28px}
-.toc{background:var(--card);border-radius:20px;padding:20px 24px;box-shadow:0 1px 2px rgba(20,33,61,.04),0 10px 28px -14px rgba(20,33,61,.18)}
-.toc b{display:block;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--gray);margin-bottom:8px}
-.toc ol{margin:0;padding-left:20px;columns:2;column-gap:32px}
-.toc li{margin:3px 0;break-inside:avoid}
-.toc a{color:var(--navy);font-weight:500;text-decoration:none}
-.callout{border-radius:18px;padding:16px 20px;margin:18px 0;background:#E6F9F0;border:1.5px solid #A8E8CB}
-.callout.warn{background:var(--amber);border-color:#FFD98A;color:var(--amber-ink)}
-.callout.reviewer{background:#FFE8E8;border-color:#FFC2C4;color:#7A1F23}
-.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:rgba(20,33,61,.08);margin-bottom:6px}
-.ph{background:#FFF0B8;border-radius:4px;padding:0 4px;font-weight:600}
-.table-scroll{overflow-x:auto;border-radius:16px;background:var(--card);box-shadow:0 1px 2px rgba(20,33,61,.04);margin:14px 0}
-table{border-collapse:collapse;width:100%;min-width:560px;font-size:14.5px}
-th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
-th{background:#F0F1EE;font-weight:600}
-tr:last-child td{border-bottom:0}
-ul li,ol li{margin:4px 0}
-footer{border-top:1px solid var(--line);background:#fff}
-footer .in{max-width:860px;margin:0 auto;padding:28px 20px;display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between;font-size:14px;color:var(--gray)}
-footer a{color:var(--gray);font-weight:500}
-@media (max-width:640px){h1{font-size:34px}.toc ol{columns:1}.nav nav{gap:12px}}
+body{margin:0;background:var(--bg);color:var(--navy);font:17px/1.6 'Heebo',system-ui,sans-serif}
+a{color:var(--green-ink)}
+img{max-width:100%;display:block}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.disp{font-family:'Rubik','Heebo',sans-serif}
 
-.hero{padding:56px 0 24px}
-.hero h1{font-size:52px;margin:0 0 14px}
-.hero p{font-size:19px;color:var(--gray);max-width:620px;margin:0}
-.badge{display:inline-block;font-size:13px;font-weight:600;color:var(--green-ink);background:#E6F9F0;border:1.5px solid #A8E8CB;border-radius:99px;padding:4px 12px;margin-bottom:18px}
-.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:36px 0}
-.card{background:var(--card);border-radius:20px;padding:20px;box-shadow:0 1px 2px rgba(20,33,61,.04),0 10px 28px -14px rgba(20,33,61,.18)}
-.card .em{font-size:26px}
-.card h3{margin:10px 0 6px}
-.card p{margin:0;color:var(--gray);font-size:15px}
-.soon{margin-top:28px;padding:16px 20px;border-radius:18px;background:var(--amber);border:1.5px solid #FFD98A;color:var(--amber-ink)}
-@media (max-width:640px){.hero h1{font-size:38px}.cards{grid-template-columns:1fr}}
+/* nav */
+.nav{position:sticky;top:0;z-index:10;background:rgba(247,248,245,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:20px;height:68px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--navy);font:800 24px 'Rubik',sans-serif;letter-spacing:-.5px}
+.brand img{width:38px;height:38px}
+.nav nav{display:flex;gap:22px;margin-inline-start:auto;font-size:15px;font-weight:500}
+.nav nav a{color:var(--gray);text-decoration:none}
+.nav nav a:hover{color:var(--navy)}
+.lang{display:flex;padding:3px;border-radius:999px;background:#EDEFEA}
+.lang button{border:0;background:transparent;font:600 14px 'Heebo',sans-serif;color:var(--gray);padding:6px 14px;border-radius:999px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(20,33,61,.14)}
+
+/* hero */
+.hero{position:relative;overflow:hidden;background:radial-gradient(70% 90% at 85% 10%,#D6F5E7 0%,rgba(214,245,231,0) 60%),radial-gradient(50% 60% at 0% 100%,#FFF1D6 0%,rgba(255,241,214,0) 60%)}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding-top:64px;padding-bottom:40px}
+.eyebrow{display:inline-block;font-size:14px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--green-ink);background:#D6F5E7;padding:6px 14px;border-radius:999px}
+[dir="rtl"] .eyebrow{text-transform:none;letter-spacing:0}
+h1{font:800 68px/1.02 'Rubik','Heebo',sans-serif;letter-spacing:-2px;margin:18px 0 16px}
+[dir="rtl"] h1{font-family:'Heebo',sans-serif;letter-spacing:-1px}
+.lead{font-size:20px;color:#3D434C;margin:0 0 28px;max-width:540px}
+.stores{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+/* Official store badges. Google's PNG has ~16% transparent padding, so it's drawn larger with negative margins to match Apple's height. */
+.store{display:inline-flex;flex-direction:column;align-items:center;border-radius:10px;text-decoration:none}
+.store img{width:auto;display:block}
+.store .as{height:52px}
+.store .gp{height:76px;margin:-12px -10px}
+.store.soon{position:relative;cursor:default}
+.store.soon img{opacity:.45}
+.store.soon .soon-label{font-size:13px;font-weight:600;color:var(--navy);line-height:1;margin-top:6px}
+a:focus-visible,button:focus-visible{outline:3px solid var(--navy);outline-offset:3px;border-radius:10px}
+.get a:focus-visible{outline-color:#fff}
+.hero-qr{display:flex;align-items:center;gap:14px;margin-top:22px;font-size:14px;color:var(--gray)}
+.hero-qr .qr{width:84px;height:84px;padding:6px;border-radius:12px;background:#fff;box-shadow:0 1px 2px rgba(20,33,61,.06),0 8px 20px -10px rgba(20,33,61,.25)}
+.phones{position:relative;height:560px}
+.phones img{position:absolute;width:250px;border-radius:28px;box-shadow:0 30px 60px -20px rgba(20,33,61,.45)}
+.phones img:nth-child(1){inset-inline-start:0;top:60px;transform:rotate(-6deg)}
+.phones img:nth-child(2){inset-inline-end:10px;top:0;transform:rotate(5deg);z-index:2}
+[dir="rtl"] .phones img:nth-child(1){transform:rotate(6deg)}
+[dir="rtl"] .phones img:nth-child(2){transform:rotate(-5deg)}
+
+/* sections */
+section{padding:72px 0}
+h2{font:700 40px/1.1 'Rubik','Heebo',sans-serif;letter-spacing:-1px;margin:0 0 12px}
+[dir="rtl"] h2{font-family:'Heebo',sans-serif;letter-spacing:0;font-weight:800}
+.sub{color:var(--gray);font-size:18px;margin:0 0 36px;max-width:620px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.feat{background:var(--card);border-radius:22px;padding:24px;box-shadow:0 1px 2px rgba(20,33,61,.04),0 12px 30px -16px rgba(20,33,61,.2)}
+.feat .ic{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.feat h3{font:700 20px 'Rubik','Heebo',sans-serif;margin:0 0 6px}
+[dir="rtl"] .feat h3{font-family:'Heebo',sans-serif;font-weight:800}
+.feat p{margin:0;color:var(--gray);font-size:16px}
+.i{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;counter-reset:s}
+.step{position:relative;padding:24px;border-radius:22px;background:#fff;border:1.5px solid var(--line)}
+.step::before{counter-increment:s;content:counter(s);display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:12px;background:var(--green);color:var(--navy);font:800 18px 'Rubik',sans-serif;margin-bottom:14px}
+.step h3{margin:0 0 6px;font-size:19px}
+.step p{margin:0;color:var(--gray);font-size:16px}
+.gallery{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.gallery img{border-radius:22px;box-shadow:0 20px 40px -20px rgba(20,33,61,.4)}
+.privacy{background:var(--navy);color:#fff;border-radius:28px;padding:48px;display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center}
+.privacy .ic{width:72px;height:72px;border-radius:22px;background:rgba(22,196,127,.18);color:#4BE0A4;display:flex;align-items:center;justify-content:center}
+.privacy h2{color:#fff;margin-bottom:8px}
+.privacy p{margin:0;color:#C5CAD2}
+.privacy a{color:#4BE0A4}
+
+/* download card */
+.get{display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;background:linear-gradient(135deg,#38DA9B,#16C47F 55%,#0FA56A);border-radius:32px;padding:48px;position:relative;overflow:hidden}
+.get::after{content:'';position:absolute;width:420px;height:420px;border-radius:50%;background:rgba(255,255,255,.1);inset-inline-end:-140px;top:-160px}
+.get h2{margin-bottom:10px}
+.get p{margin:0 0 24px;font-size:18px;color:#0E3A2A;max-width:460px}
+.qrcard{position:relative;z-index:1;background:#fff;border-radius:24px;padding:22px;text-align:center;box-shadow:0 24px 50px -20px rgba(10,60,40,.5);width:260px}
+.qrbox{position:relative;width:216px;height:216px;margin:0 auto}
+.qrbox img.code{width:100%;height:100%}
+.qrbox img.mark{position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;background:#fff;border-radius:50%;padding:4px}
+.qrcard b{display:block;margin-top:12px;font-size:16px}
+.qrcard span{font-size:13px;color:var(--gray)}
+
+footer{border-top:1px solid var(--line);margin-top:24px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;padding:28px 20px;font-size:14px;color:var(--gray)}
+footer nav{display:flex;flex-wrap:wrap;gap:18px}
+footer a{color:var(--gray);text-decoration:none}
+footer a:hover{color:var(--navy)}
+
+@media (max-width:900px){
+  .hero .wrap{grid-template-columns:1fr;padding-top:40px}
+  h1{font-size:48px}
+  .phones{height:420px;max-width:420px;margin:0 auto;width:100%}
+  .phones img{width:190px}
+  .grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps{grid-template-columns:1fr}
+  .gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .get{grid-template-columns:1fr;padding:32px}
+  .qrcard{margin:0 auto}
+  .privacy{grid-template-columns:1fr;padding:32px}
+  .nav nav{display:none}
+  .lang{margin-inline-start:auto}
+  .hero-qr{display:none}
+}
+@media (max-width:520px){h1{font-size:40px}h2{font-size:30px}.grid4{grid-template-columns:1fr}.store .as{height:46px}.store .gp{height:67px;margin:-10px -9px}}
 </style>
 </head>
 <body>
-<header class="nav"><div class="in">
-<a class="brand" href="./"><i></i>komona</a>
-<nav><a href="terms/">Terms</a><a href="privacy/">Privacy</a><a href="delete-account/">Delete account</a></nav>
+
+<header class="nav"><div class="wrap">
+  <a class="brand" href="./"><img src="assets/logo.png" alt="">komona</a>
+  <nav>
+    <a href="#features" data-i18n="nav_features">Features</a>
+    <a href="#how" data-i18n="nav_how">How it works</a>
+    <a href="#download" data-i18n="nav_get">Get the app</a>
+    <a href="privacy/" data-i18n="privacy">Privacy</a>
+  </nav>
+  <div class="lang" role="group" aria-label="Language" data-i18n-label="lang_label">
+    <button type="button" data-lang="en" aria-pressed="true">English</button>
+    <button type="button" data-lang="he" aria-pressed="false" lang="he">עברית</button>
+  </div>
 </div></header>
 
-<main class="wrap">
-<section class="hero">
-<span class="badge">For pickup games, dinners &amp; game nights</span>
-<h1>Less chat. More hangs.</h1>
-<p>Komona keeps your weekly games organized: live spots, a fair first-come-first-served waitlist and who brings what, all in one place instead of a 200-message group chat.</p>
-</section>
+<div class="hero"><div class="wrap">
+  <div>
+    <span class="eyebrow" data-i18n="eyebrow">For pickup games, dinners &amp; game nights</span>
+    <h1 data-i18n="h1">Less chat. More hangs.</h1>
+    <p class="lead" data-i18n="lead">Komona organizes events with your friends: live spots, a fair waitlist and who brings what, all in one place instead of a 200-message group chat.</p>
+    <div class="stores" data-stores></div>
+    <div class="hero-qr"><img class="qr" src="assets/qr.svg" alt="QR code to download Komona" data-i18n-alt="qr_alt"><span data-i18n="scan_hint">On a computer? Scan with your phone camera to download.</span></div>
+  </div>
+  <div class="phones" aria-hidden="true">
+    <img data-shot="1" src="assets/shot-en-1.jpg" alt="">
+    <img data-shot="2" src="assets/shot-en-2.jpg" alt="">
+  </div>
+</div></div>
 
-<div class="cards">
-<div class="card"><div class="em">📋</div><h3>Live roster</h3><p>See who's in right now. Spots update the moment someone joins or leaves.</p></div>
-<div class="card"><div class="em">⏳</div><h3>Fair waitlist</h3><p>When a game is full you join the waitlist in order, and move in automatically when a spot opens.</p></div>
-<div class="card"><div class="em">⚽</div><h3>Who brings what</h3><p>Organizers ask "Who can bring a ball?" and members claim it with one tap.</p></div>
-<div class="card"><div class="em">🔁</div><h3>Every week, sorted</h3><p>Repeating events open signups on schedule and remind everyone before the game.</p></div>
-</div>
+<section id="features"><div class="wrap">
+  <h2 data-i18n="feat_title">Everything your crew needs</h2>
+  <p class="sub" data-i18n="feat_sub">From weekly pickup games to one-off dinners, Komona keeps the plan clear for everyone.</p>
+  <div class="grid4">
+    <div class="feat"><div class="ic" style="background:#D6F5E7;color:#0B8A57"><svg class="i" width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 19.5c.9-3.2 3.4-4.8 6.5-4.8s5.6 1.6 6.5 4.8"/><path d="M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.9c1.8.7 3 2.2 3.5 4.6"/></svg></div><h3 data-i18n="f1_t">Live spots</h3><p data-i18n="f1_d">See who's going right now. Spots update the moment someone joins or leaves.</p></div>
+    <div class="feat"><div class="ic" style="background:#FFEBC2;color:#7A4E00"><svg class="i" width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div><h3 data-i18n="f2_t">Fair waitlist</h3><p data-i18n="f2_d">When it's full, people wait in order. If someone drops out, the next person moves in automatically.</p></div>
+    <div class="feat"><div class="ic" style="background:#E7ECF6;color:#14213D"><svg class="i" width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18.5V6.5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8z"/></svg></div><h3 data-i18n="f3_t">Who brings what</h3><p data-i18n="f3_d">Ask "Who can bring a ball?" and friends claim it with one tap.</p></div>
+    <div class="feat"><div class="ic" style="background:#DFE8FF;color:#1F4FD1"><svg class="i" width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2.5 20.5 6 17 9.5"/><path d="M3.5 11.5V10a4 4 0 0 1 4-4h13"/><path d="M7 21.5 3.5 18 7 14.5"/><path d="M20.5 12.5V14a4 4 0 0 1-4 4h-13"/></svg></div><h3 data-i18n="f4_t">Repeating events</h3><p data-i18n="f4_d">Set it up once. Signups open on schedule and everyone gets a reminder.</p></div>
+  </div>
+</div></section>
 
-<h2>Private by design</h2>
-<p>Events are visible only to people you invite by link or code. Komona has no ads and doesn't sell your data. Read the <a href="privacy/">Privacy Policy</a>.</p>
+<section id="how" style="padding-top:0"><div class="wrap">
+  <h2 data-i18n="how_title">How it works</h2>
+  <p class="sub" data-i18n="how_sub">Three steps, no polls.</p>
+  <div class="steps">
+    <div class="step"><h3 data-i18n="s1_t">Create an event</h3><p data-i18n="s1_d">Pick a category, add a place and time, and set how many people can join.</p></div>
+    <div class="step"><h3 data-i18n="s2_t">Share one link</h3><p data-i18n="s2_d">Send the invite link or code on WhatsApp, Telegram or anywhere else.</p></div>
+    <div class="step"><h3 data-i18n="s3_t">Friends tap to join</h3><p data-i18n="s3_d">Spots fill in real time, first come first served. Komona handles the rest.</p></div>
+  </div>
+  <div class="gallery" style="margin-top:48px" aria-hidden="true">
+    <img data-shot="1" src="assets/shot-en-1.jpg" alt=""><img data-shot="2" src="assets/shot-en-2.jpg" alt=""><img data-shot="3" src="assets/shot-en-3.jpg" alt=""><img data-shot="5" src="assets/shot-en-5.jpg" alt="">
+  </div>
+</div></section>
 
-<div class="soon"><b>Coming soon</b> to Google Play and the App Store. Got an invite link? Open it on your phone to join the game.</div>
-</main>
+<section style="padding-top:0"><div class="wrap">
+  <div class="privacy">
+    <div class="ic"><svg class="i" width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.2 7.5 9.5 4.3-1.3 7.5-4.9 7.5-9.5V6z"/><path d="m9 12 2 2 4-4"/></svg></div>
+    <div><h2 data-i18n="priv_title">Private by design</h2>
+    <p><span data-i18n="priv_text">Events are visible only to people you invite by link or code. No ads, and we never sell your data.</span> <a href="privacy/" data-i18n="priv_link">Read our Privacy Policy</a></p></div>
+  </div>
+</div></section>
 
-<footer><div class="in">
-<span>© 2026 Komona</span>
-<span><a href="terms/">Terms of Service</a> · <a href="privacy/">Privacy Policy</a> · <a href="delete-account/">Delete account</a> · <a href="mailto:komona.support@gmail.com">Contact</a></span>
+<section id="download" style="padding-top:0"><div class="wrap">
+  <div class="get">
+    <div style="position:relative;z-index:1">
+      <h2 data-i18n="get_title">Get the app</h2>
+      <p data-i18n="get_text">Download Komona and start planning with your crew from anywhere.</p>
+      <div class="stores" data-stores></div>
+    </div>
+    <div class="qrcard">
+      <div class="qrbox"><img class="code" src="assets/qr.svg" alt="QR code to download Komona" data-i18n-alt="qr_alt"><img class="mark" src="assets/logo.png" alt=""></div>
+      <b data-i18n="qr_title">Scan to download</b>
+      <span data-i18n="qr_text">Opens the App Store or Google Play automatically</span>
+    </div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <span>© 2026 Komona</span>
+  <nav>
+    <a href="terms/" data-i18n="terms">Terms of Service</a>
+    <a href="privacy/" data-i18n="privacy_full">Privacy Policy</a>
+    <a href="delete-account/" data-i18n="delete">Delete account</a>
+    <a href="mailto:komona.support@gmail.com" data-i18n="contact">Contact</a>
+  </nav>
 </div></footer>
+
+<script>
+// Store links come from assets/config.js. Paste the App Store URL there, not here.
+var STORES = window.KOMONA_STORES || {};
+var PLAY_URL = STORES.PLAY_URL || 'https://play.google.com/store/apps/details?id=io.github.amirfransis.komona';
+var APP_STORE_URL = STORES.APP_STORE_URL || '';
+
+var T = {
+  en: {
+    nav_features:'Features', nav_how:'How it works', nav_get:'Get the app', privacy:'Privacy',
+    eyebrow:'For pickup games, dinners & game nights', h1:'Less chat. More hangs.',
+    lead:'Komona organizes events with your friends: live spots, a fair waitlist and who brings what, all in one place instead of a 200-message group chat.',
+    scan_hint:'On a computer? Scan with your phone camera to download.',
+    feat_title:'Everything your crew needs', feat_sub:'From weekly pickup games to one-off dinners, Komona keeps the plan clear for everyone.',
+    f1_t:'Live spots', f1_d:"See who's going right now. Spots update the moment someone joins or leaves.",
+    f2_t:'Fair waitlist', f2_d:"When it's full, people wait in order. If someone drops out, the next person moves in automatically.",
+    f3_t:'Who brings what', f3_d:'Ask "Who can bring a ball?" and friends claim it with one tap.',
+    f4_t:'Repeating events', f4_d:'Set it up once. Signups open on schedule and everyone gets a reminder.',
+    how_title:'How it works', how_sub:'Three steps, no polls.',
+    s1_t:'Create an event', s1_d:'Pick a category, add a place and time, and set how many people can join.',
+    s2_t:'Share one link', s2_d:'Send the invite link or code on WhatsApp, Telegram or anywhere else.',
+    s3_t:'Friends tap to join', s3_d:'Spots fill in real time, first come first served. Komona handles the rest.',
+    priv_title:'Private by design', priv_text:'Events are visible only to people you invite by link or code. No ads, and we never sell your data.', priv_link:'Read our Privacy Policy',
+    get_title:'Get the app', get_text:'Download Komona and start planning with your crew from anywhere.',
+    qr_title:'Scan to download', qr_text:'Opens the App Store or Google Play automatically',
+    terms:'Terms of Service', privacy_full:'Privacy Policy', delete:'Delete account', contact:'Contact',
+    as_alt:'Download on the App Store', gp_alt:'Get it on Google Play', soon:'Coming soon',
+    qr_alt:'QR code to download Komona', lang_label:'Language',
+    title:'Komona · Less chat. More hangs.'
+  },
+  he: {
+    nav_features:'יכולות', nav_how:'איך זה עובד', nav_get:'הורדת האפליקציה', privacy:'פרטיות',
+    eyebrow:'למשחקים, ארוחות וערבי משחקים', h1:'פחות צ׳אט. יותר מפגשים.',
+    lead:'Komona מארגנת מפגשים עם החברים: מקומות בזמן אמת, רשימת המתנה הוגנת ומי מביא מה, הכל במקום אחד במקום 200 הודעות בקבוצה.',
+    scan_hint:'גולשים מהמחשב? סרקו עם מצלמת הטלפון כדי להוריד.',
+    feat_title:'כל מה שהחבר׳ה צריכים', feat_sub:'ממשחק כדורגל שבועי ועד ארוחה חד־פעמית, Komona שומרת על תוכנית ברורה לכולם.',
+    f1_t:'מקומות בזמן אמת', f1_d:'רואים מי מגיע עכשיו. המקומות מתעדכנים ברגע שמישהו מצטרף או יוצא.',
+    f2_t:'רשימת המתנה הוגנת', f2_d:'כשמלא, ממתינים לפי הסדר. כשמישהו מבטל, הבא בתור נכנס אוטומטית.',
+    f3_t:'מי מביא מה', f3_d:'שואלים "מי יכול להביא כדור?" והחברים לוקחים את זה בלחיצה אחת.',
+    f4_t:'אירועים חוזרים', f4_d:'מגדירים פעם אחת. ההרשמה נפתחת בזמן וכולם מקבלים תזכורת.',
+    how_title:'איך זה עובד', how_sub:'שלושה שלבים, בלי סקרים.',
+    s1_t:'יוצרים אירוע', s1_d:'בוחרים קטגוריה, מוסיפים מקום ושעה וקובעים כמה אנשים יכולים להצטרף.',
+    s2_t:'משתפים קישור אחד', s2_d:'שולחים את קישור ההזמנה או הקוד בווטסאפ, בטלגרם או בכל מקום אחר.',
+    s3_t:'החברים מצטרפים בלחיצה', s3_d:'המקומות מתמלאים בזמן אמת, כל הקודם זוכה. Komona דואגת לכל השאר.',
+    priv_title:'פרטיות מהיסוד', priv_text:'האירועים גלויים רק למי שהזמנתם בקישור או בקוד. בלי פרסומות, ואנחנו לא מוכרים את המידע שלכם.', priv_link:'למדיניות הפרטיות',
+    get_title:'האפליקציה לנייד', get_text:'מורידים את Komona ומתחילים לתכנן עם החבר׳ה מכל מקום.',
+    qr_title:'סורקים ומורידים', qr_text:'נפתח אוטומטית ב־App Store או ב־Google Play',
+    terms:'תנאי שימוש', privacy_full:'מדיניות פרטיות', delete:'מחיקת חשבון', contact:'יצירת קשר',
+    as_alt:'להורדה ב־App Store', gp_alt:'כעת ב־Google Play', soon:'בקרוב',
+    qr_alt:'קוד QR להורדת Komona', lang_label:'שפה',
+    title:'Komona · פחות צ׳אט. יותר מפגשים.'
+  }
+};
+
+// Official badges from Apple (toolbox.marketingtools.apple.com) and Google (play.google.com/intl/en_us/badges/), per language.
+function el(tag, attrs, children){
+  var n = document.createElement(tag);
+  for (var k in attrs) n.setAttribute(k, attrs[k]);
+  (children || []).forEach(function(c){ n.appendChild(c); });
+  return n;
+}
+function storeButtons(lang, t){
+  var asImg = el('img', {'class':'as', src:'assets/badges/app-store-'+lang+'.svg', alt:t.as_alt});
+  var ios = APP_STORE_URL
+    ? el('a', {'class':'store', href:APP_STORE_URL, target:'_blank', rel:'noopener'}, [asImg])
+    : el('span', {'class':'store soon', role:'img', 'aria-label':t.as_alt+' · '+t.soon}, [asImg, el('span', {'class':'soon-label', 'aria-hidden':'true'}, [document.createTextNode(t.soon)])]);
+  var play = el('a', {'class':'store', href:PLAY_URL, target:'_blank', rel:'noopener'}, [el('img', {'class':'gp', src:'assets/badges/google-play-'+lang+'.png', alt:t.gp_alt})]);
+  return [ios, play];
+}
+
+function setLang(lang){
+  if (lang !== 'he') lang = 'en';
+  var t = T[lang];
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+  document.title = t.title;
+  document.querySelectorAll('[data-i18n]').forEach(function(el){ var k = el.getAttribute('data-i18n'); if (t[k]) el.textContent = t[k]; });
+  document.querySelectorAll('[data-i18n-alt]').forEach(function(el){ el.alt = t[el.getAttribute('data-i18n-alt')]; });
+  document.querySelectorAll('[data-i18n-label]').forEach(function(el){ el.setAttribute('aria-label', t[el.getAttribute('data-i18n-label')]); });
+  document.querySelectorAll('[data-stores]').forEach(function(box){ box.replaceChildren.apply(box, storeButtons(lang, t)); });
+  document.querySelectorAll('img[data-shot]').forEach(function(img){ img.src = 'assets/shot-' + lang + '-' + img.getAttribute('data-shot') + '.jpg'; });
+  document.querySelectorAll('.lang button').forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-lang') === lang ? 'true' : 'false'); });
+  try { localStorage.setItem('komona-lang', lang); } catch(e) {}
+}
+
+document.querySelectorAll('.lang button').forEach(function(b){ b.addEventListener('click', function(){ setLang(b.getAttribute('data-lang')); }); });
+
+// The language was chosen in <head> (?lang= wins, then the saved choice, then the browser language).
+setLang(window.KOMONA_LANG || 'en');
+</script>
 </body>
 </html>
