@@ -85,8 +85,13 @@ h1{font:800 68px/1.02 'Rubik','Heebo',sans-serif;letter-spacing:-2px;margin:18px
 .store.soon .soon-label{font-size:13px;font-weight:600;color:var(--navy);line-height:1;margin-top:6px}
 a:focus-visible,button:focus-visible{outline:3px solid var(--navy);outline-offset:3px;border-radius:10px}
 .get a:focus-visible{outline-color:#fff}
-.hero-qr{display:flex;align-items:center;gap:14px;margin-top:22px;font-size:14px;color:var(--gray)}
-.hero-qr .qr{width:84px;height:84px;padding:6px;border-radius:12px;background:#fff;box-shadow:0 1px 2px rgba(20,33,61,.06),0 8px 20px -10px rgba(20,33,61,.25)}
+.appcard{background:#fff;border:1.5px solid var(--line);border-radius:22px;padding:20px 22px 18px;max-width:400px;box-shadow:0 1px 2px rgba(20,33,61,.04),0 12px 30px -16px rgba(20,33,61,.2)}
+.appcard-title{display:block;font:700 19px 'Rubik','Heebo',sans-serif;margin-bottom:4px}
+[dir="rtl"] .appcard-title{font-family:'Heebo',sans-serif;font-weight:800}
+.appcard p{margin:0 0 14px;font-size:16px;color:#3D434C}
+.appcard .qrbox{width:150px;height:150px;margin:0 auto 14px}
+.appcard .qrbox img.mark{width:42px;height:42px;margin:-21px 0 0 -21px;padding:3px}
+.appcard .stores{justify-content:center}
 .phones{position:relative;height:560px}
 .phones img{position:absolute;width:250px;border-radius:28px;box-shadow:0 30px 60px -20px rgba(20,33,61,.45)}
 .phones img:nth-child(1){inset-inline-start:0;top:60px;transform:rotate(-6deg)}
@@ -150,7 +155,7 @@ footer a:hover{color:var(--navy)}
   .privacy{grid-template-columns:1fr;padding:32px}
   .nav nav{display:none}
   .lang{margin-inline-start:auto}
-  .hero-qr{display:none}
+  .appcard .qrbox{display:none}
 }
 @media (max-width:520px){h1{font-size:40px}h2{font-size:30px}.grid4{grid-template-columns:1fr}.store .as{height:46px}.store .gp{height:67px;margin:-10px -9px}}
 </style>
@@ -176,8 +181,12 @@ footer a:hover{color:var(--navy)}
     <span class="eyebrow" data-i18n="eyebrow">For pickup games, dinners &amp; game nights</span>
     <h1 data-i18n="h1">Less chat. More hangs.</h1>
     <p class="lead" data-i18n="lead">Komona organizes events with your friends: live spots, a fair waitlist and who brings what, all in one place instead of a 200-message group chat.</p>
-    <div class="stores" data-stores></div>
-    <div class="hero-qr"><img class="qr" src="assets/qr.svg" alt="QR code to download Komona" data-i18n-alt="qr_alt"><span data-i18n="scan_hint">On a computer? Scan with your phone camera to download.</span></div>
+    <div class="appcard">
+      <b class="appcard-title" data-i18n="get_title">Get the app</b>
+      <p data-i18n="get_text">Download Komona and start planning with your crew from anywhere.</p>
+      <div class="qrbox"><img class="code" src="assets/qr.svg" alt="QR code to download Komona" data-i18n-alt="qr_alt"><img class="mark" src="assets/logo.png" alt=""></div>
+      <div class="stores" data-stores></div>
+    </div>
   </div>
   <div class="phones" aria-hidden="true">
     <img data-shot="1" src="assets/shot-en-1.jpg" alt="">
